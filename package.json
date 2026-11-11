@@ -1,0 +1,50 @@
+{
+  "name": "outreach-tracker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dashboard that syncs a cold-email prospecting campaign from Gmail and tracks sends, replies, follow-ups and outcomes per company.",
+  "license": "MIT",
+  "author": "Lucas Juárez",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "dev:demo": "cross-env DEMO_MODE=true next dev",
+    "build": "next build",
+    "start": "next start",
+    "start:demo": "cross-env DEMO_MODE=true next start",
+    "screenshots": "node scripts/screenshots.mjs",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:push": "prisma db push",
+    "sync": "tsx --env-file=.env --conditions=react-server scripts/sync.ts",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "@googleapis/gmail": "22.0.2",
+    "@prisma/client": "6.19.3",
+    "next": "15.5.29",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
+    "server-only": "0.0.1",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "3.3.7",
+    "@tailwindcss/postcss": "4.1.18",
+    "@types/node": "20.19.43",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "cross-env": "7.0.3",
+    "eslint": "9.39.5",
+    "eslint-config-next": "15.5.29",
+    "playwright-core": "1.56.1",
+    "prisma": "6.19.3",
+    "tailwindcss": "4.1.18",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  }
+}

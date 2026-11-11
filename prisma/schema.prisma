@@ -1,0 +1,69 @@
+// Local SQLite database. Real prospect data lives only here (prisma/dev.db is git-ignored).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id        String    @id @default(cuid())
+  name      String
+  /// Email domain used to group contacts (or "personal:<email>" for free providers).
+  domain    String    @unique
+  website   String?
+  location  String?
+  /// Distance ring used to order prospecting (1 = closest).
+  ring      Int?
+  segment   String?
+  notes     String?
+  contacts  Contact[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Contact {
+  id         String     @id @default(cuid())
+  email      String     @unique
+  name       String?
+  role       String?
+  company    Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId  String
+  outreaches Outreach[]
+  createdAt  DateTime   @default(now())
+}
+
+/// One prospecting email thread. Technical fields are rewritten on every sync;
+/// `outcome` and `notes` are set by the user and never touched by the sync.
+model Outreach {
+  id               String    @id @default(cuid())
+  gmailThreadId    String    @unique
+  subject          String
+  sentAt           DateTime
+  followUpSentAt   DateTime?
+  firstReplyAt     DateTime?
+  lastReplyAt      DateTime?
+  replyCount       Int       @default(0)
+  autoReplyCount   Int       @default(0)
+  lastReplySnippet String?
+  bounced          Boolean   @default(false)
+  /// PENDING | INTERESTED | MORE_INFO | LATER | NOT_INTERESTED | UNSUBSCRIBED
+  outcome          String    @default("PENDING")
+  notes            String?
+  contact          Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  contactId        String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+/// Single connected Gmail account (id is always 1).
+model GmailAccount {
+  id           Int       @id @default(1)
+  email        String
+  refreshToken String
+  lastSyncAt   DateTime?
+  createdAt    DateTime  @default(now())
+}
